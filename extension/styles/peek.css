@@ -1,0 +1,185 @@
+/* Diablo Peek panel – layout & motion; colors from theme.css */
+
+.diablo-peek-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--diablo-overlay);
+  backdrop-filter: blur(var(--diablo-overlay-blur));
+  -webkit-backdrop-filter: blur(var(--diablo-overlay-blur));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2147483647;
+  animation: diablo-peek-backdrop-in 0.2s ease-out;
+}
+
+.diablo-peek-backdrop.diablo-peek-closing {
+  animation: diablo-peek-backdrop-out 0.15s ease-in forwards;
+}
+
+@keyframes diablo-peek-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes diablo-peek-backdrop-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.diablo-peek-panel {
+  width: 80vw;
+  height: 80vh;
+  max-width: 1200px;
+  max-height: 800px;
+  background: var(--diablo-bg);
+  border-radius: var(--diablo-radius-lg);
+  box-shadow: var(--diablo-shadow-panel);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: diablo-peek-panel-in 0.2s ease-out;
+}
+
+.diablo-peek-panel.diablo-peek-closing {
+  animation: diablo-peek-panel-out 0.15s ease-in forwards;
+}
+
+@keyframes diablo-peek-panel-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes diablo-peek-panel-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.95); }
+}
+
+/* Top bar */
+.diablo-peek-topbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--diablo-bg-elevated);
+  border-bottom: 1px solid var(--diablo-border-strong);
+  flex-shrink: 0;
+}
+
+.diablo-peek-url {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 10px;
+  background: var(--diablo-bg);
+  border-radius: var(--diablo-radius-sm);
+  color: var(--diablo-text-dim);
+  font-size: 13px;
+  font-family: var(--diablo-font-mono);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.diablo-peek-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: var(--diablo-radius-sm);
+  font-size: 13px;
+  cursor: pointer;
+  background: var(--diablo-bg-control);
+  color: var(--diablo-text);
+  transition: background 0.15s;
+}
+
+.diablo-peek-btn:hover {
+  background: var(--diablo-bg-control-hover);
+}
+
+.diablo-peek-btn-close {
+  padding: 6px 10px;
+  background: transparent;
+  color: var(--diablo-text-muted);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.diablo-peek-btn-close:hover {
+  background: var(--diablo-bg-control);
+  color: var(--diablo-text);
+}
+
+/* Frame area */
+.diablo-peek-frame-wrap {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  background: #fff;
+}
+
+.diablo-peek-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  background: #fff;
+}
+
+/* Loading spinner */
+.diablo-peek-loader {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: var(--diablo-text-muted);
+  font-size: var(--diablo-font-size-base);
+  background: var(--diablo-bg);
+}
+
+.diablo-peek-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--diablo-bg-control);
+  border-top-color: var(--diablo-text-muted);
+  border-radius: 50%;
+  animation: diablo-peek-spin 0.7s linear infinite;
+}
+
+@keyframes diablo-peek-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Fallback */
+.diablo-peek-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--diablo-bg);
+  color: var(--diablo-text-muted);
+  padding: 24px;
+  text-align: center;
+  gap: 12px;
+}
+
+.diablo-peek-fallback p {
+  margin: 0;
+  font-size: var(--diablo-font-size-base);
+}
+
+.diablo-peek-fallback .diablo-peek-btn {
+  margin-top: 4px;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .diablo-peek-panel {
+    width: calc(100vw - 24px);
+    height: calc(100vh - 24px);
+    margin: 12px;
+  }
+}

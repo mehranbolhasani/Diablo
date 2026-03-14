@@ -1,0 +1,122 @@
+/* Diablo Popup – layout; colors from theme.css */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  width: 320px;
+  margin: 0;
+  padding: 0;
+  font-family: var(--diablo-font-sans);
+  font-size: var(--diablo-font-size-base);
+  background: var(--diablo-bg);
+  color: var(--diablo-text);
+}
+
+.popup-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--diablo-border);
+}
+
+.popup-title {
+  margin: 0;
+  font-size: var(--diablo-font-size-title);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.popup-desc {
+  margin: 4px 0 0;
+  font-size: var(--diablo-font-size-sm);
+  color: var(--diablo-text-muted);
+}
+
+.popup-main {
+  padding: 8px 0;
+}
+
+.popup-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.popup-row:hover {
+  background: var(--diablo-bg-hover);
+}
+
+.popup-label-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.popup-label {
+  font-weight: 500;
+}
+
+.popup-hint {
+  font-size: var(--diablo-font-size-sm);
+  color: var(--diablo-text-muted);
+}
+
+/* Toggle switch – CSS only */
+.popup-toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  margin: 0;
+  appearance: none;
+  background: var(--diablo-bg-control);
+  border-radius: var(--diablo-radius-toggle);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.popup-toggle::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: var(--diablo-text-muted);
+  border-radius: 50%;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.popup-toggle:checked {
+  background: var(--diablo-accent);
+}
+
+.popup-toggle:checked::before {
+  transform: translateX(20px);
+  background: var(--diablo-accent-foreground);
+}
+
+.popup-toggle:hover {
+  background: var(--diablo-bg-control-hover);
+}
+
+.popup-toggle:checked:hover {
+  background: var(--diablo-accent-hover);
+}
+
+.popup-toggle:focus {
+  outline: none;
+}
+
+.popup-toggle:focus-visible::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border: 2px solid var(--diablo-accent);
+  border-radius: 14px;
+  pointer-events: none;
+}

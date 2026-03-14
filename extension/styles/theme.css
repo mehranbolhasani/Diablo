@@ -1,0 +1,79 @@
+/**
+ * Diablo theme – light/dark via prefers-color-scheme (no JS).
+ * Customize here; used by popup, peek panel, hover preview.
+ * :root = popup, :host = shadow DOM (peek/preview).
+ */
+:root,
+:host {
+  color-scheme: light dark;
+}
+
+/* ---- Dark (default) ---- */
+:root,
+:host {
+  --diablo-bg: #1a1a1a;
+  --diablo-bg-elevated: #252525;
+  --diablo-bg-hover: #222;
+  --diablo-bg-control: #333;
+  --diablo-bg-control-hover: #404040;
+
+  --diablo-text: #e8e8e8;
+  --diablo-text-muted: #888;
+  --diablo-text-dim: #a0a0a0;
+  --diablo-text-faint: #666;
+
+  --diablo-accent: #3a7bd5;
+  --diablo-accent-hover: #4a8ae0;
+  --diablo-accent-foreground: #fff;
+
+  --diablo-border: #2a2a2a;
+  --diablo-border-strong: #333;
+
+  --diablo-overlay: rgba(0, 0, 0, 0.5);
+  --diablo-overlay-blur: 4px;
+
+  --diablo-shadow-panel: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  --diablo-shadow-card: 0 10px 40px rgba(0, 0, 0, 0.4);
+
+  --diablo-radius-sm: 6px;
+  --diablo-radius-md: 10px;
+  --diablo-radius-lg: 12px;
+  --diablo-radius-toggle: 12px;
+
+  --diablo-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+  --diablo-font-mono: ui-monospace, monospace;
+  --diablo-font-size-base: 14px;
+  --diablo-font-size-sm: 12px;
+  --diablo-font-size-xs: 11px;
+  --diablo-font-size-title: 18px;
+}
+
+/* ---- Light ---- */
+@media (prefers-color-scheme: light) {
+  :root,
+  :host {
+    --diablo-bg: #fafafa;
+    --diablo-bg-elevated: #f0f0f0;
+    --diablo-bg-hover: #eeeeee;
+    --diablo-bg-control: #e5e5e5;
+    --diablo-bg-control-hover: #d4d4d4;
+
+    --diablo-text: #171717;
+    --diablo-text-muted: #737373;
+    --diablo-text-dim: #525252;
+    --diablo-text-faint: #a3a3a3;
+
+    --diablo-accent: #2563eb;
+    --diablo-accent-hover: #3b82f6;
+    --diablo-accent-foreground: #fff;
+
+    --diablo-border: #e5e5e5;
+    --diablo-border-strong: #d4d4d4;
+
+    --diablo-overlay: rgba(0, 0, 0, 0.35);
+    --diablo-overlay-blur: 4px;
+
+    --diablo-shadow-panel: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    --diablo-shadow-card: 0 10px 40px rgba(0, 0, 0, 0.12);
+  }
+}

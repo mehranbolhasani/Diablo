@@ -10,7 +10,7 @@
 <body>
   <header class="popup-header">
     <h1 class="popup-title">Diablo</h1>
-    <p class="popup-desc">Arc-inspired browsing tweaks</p>
+    <p class="popup-desc">Peek-focused browsing</p>
   </header>
   <main class="popup-main">
     <label class="popup-row">
@@ -20,19 +20,23 @@
       </span>
       <input type="checkbox" id="peekEnabled" class="popup-toggle" role="switch" aria-checked="true">
     </label>
-    <label class="popup-row">
+    <label class="popup-row popup-row-select" for="peekSizePreset">
       <span class="popup-label-wrap">
-        <span class="popup-label">Hover Preview</span>
-        <span class="popup-hint">See link details on hover</span>
+        <span class="popup-label">Peek Window Size</span>
+        <span class="popup-hint">Default size for link preview panel</span>
       </span>
-      <input type="checkbox" id="hoverPreviewEnabled" class="popup-toggle" role="switch" aria-checked="true">
+      <select id="peekSizePreset" class="popup-select" aria-label="Peek window size">
+        <option value="small">Small</option>
+        <option value="medium">Medium</option>
+        <option value="large">Large</option>
+      </select>
     </label>
     <label class="popup-row">
       <span class="popup-label-wrap">
-        <span class="popup-label">Tabs Outside Groups</span>
-        <span class="popup-hint">New tabs bypass tab groups</span>
+        <span class="popup-label">Aggressive X Unshorten</span>
+        <span class="popup-hint">Resolve stubborn t.co links via background tab</span>
       </span>
-      <input type="checkbox" id="tabOutsideGroupsEnabled" class="popup-toggle" role="switch" aria-checked="false">
+      <input type="checkbox" id="aggressiveXUnshortenEnabled" class="popup-toggle" role="switch" aria-checked="false">
     </label>
   </main>
   <script src="popup.js"></script>

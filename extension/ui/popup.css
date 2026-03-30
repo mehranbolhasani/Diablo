@@ -50,6 +50,10 @@ body {
   background: var(--diablo-bg-hover);
 }
 
+.popup-row-select {
+  cursor: default;
+}
+
 .popup-label-wrap {
   display: flex;
   flex-direction: column;
@@ -119,4 +123,27 @@ body {
   border: 2px solid var(--diablo-accent);
   border-radius: 14px;
   pointer-events: none;
+}
+
+.popup-select {
+  height: 28px;
+  min-width: 96px;
+  padding: 0 10px;
+  border: 1px solid var(--diablo-border-strong);
+  border-radius: var(--diablo-radius-sm);
+  background: var(--diablo-bg-control);
+  color: var(--diablo-text);
+  font-size: var(--diablo-font-size-sm);
+}
+
+.popup-select:hover {
+  background: var(--diablo-bg-control-hover);
+}
+
+.popup-select:focus {
+  outline: none;
+}
+
+.popup-select:focus-visible {
+  border-color: var(--diablo-accent);
 }

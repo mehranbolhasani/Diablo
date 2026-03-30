@@ -1,7 +1,7 @@
 /**
  * Diablo Popup - Read/write settings from chrome.storage.sync
  *
- * On load: read peekEnabled, hoverPreviewEnabled, tabOutsideGroupsEnabled
+ * On load: read peek-related settings
  * and set toggle states. On change: write back to storage.
  * Content scripts read these settings when acting, so changes apply immediately.
  */
@@ -9,11 +9,11 @@
 (function () {
   const DEFAULTS = {
     peekEnabled: true,
-    hoverPreviewEnabled: true,
-    tabOutsideGroupsEnabled: false,
+    peekSizePreset: 'medium',
+    aggressiveXUnshortenEnabled: false,
   };
 
-  const ids = ['peekEnabled', 'hoverPreviewEnabled', 'tabOutsideGroupsEnabled'];
+  const ids = ['peekEnabled', 'aggressiveXUnshortenEnabled'];
 
   function load() {
     chrome.storage.sync.get(DEFAULTS, (stored) => {
@@ -21,6 +21,11 @@
         const el = document.getElementById(id);
         if (el) el.checked = stored[id] === true;
       });
+      const sizeEl = document.getElementById('peekSizePreset');
+      if (sizeEl) {
+        const preset = stored.peekSizePreset;
+        sizeEl.value = (preset === 'small' || preset === 'large' || preset === 'medium') ? preset : 'medium';
+      }
     });
   }
 
@@ -38,4 +43,13 @@
       save(id, el.checked);
     });
   });
+
+  const sizeEl = document.getElementById('peekSizePreset');
+  if (sizeEl) {
+    sizeEl.addEventListener('change', () => {
+      const value = sizeEl.value;
+      const preset = (value === 'small' || value === 'large' || value === 'medium') ? value : 'medium';
+      save('peekSizePreset', preset);
+    });
+  }
 })();

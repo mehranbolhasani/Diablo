@@ -2,8 +2,8 @@
   "manifest_version": 3,
   "name": "Diablo",
   "version": "1.0.0",
-  "description": "Arc-inspired browsing: peek links, hover previews, and tabs outside groups.",
-  "permissions": ["tabs", "scripting", "storage", "activeTab", "declarativeNetRequest"],
+  "description": "Arc-inspired browsing: peek links instantly.",
+  "permissions": ["tabs", "storage", "declarativeNetRequest"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js"
@@ -20,11 +20,11 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content/peek.js", "content/hoverPreview.js", "content/tabBehavior.js"],
+      "js": ["content/peek.js"],
       "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [
-    { "resources": ["styles/theme.css", "styles/peek.css", "styles/preview.css"], "matches": ["<all_urls>"] }
+    { "resources": ["styles/theme.css", "styles/peek.css"], "matches": ["<all_urls>"] }
   ]
 }

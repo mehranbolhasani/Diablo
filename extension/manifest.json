@@ -10,7 +10,12 @@
   },
   "action": {
     "default_popup": "ui/popup.html",
-    "default_title": "Diablo"
+    "default_title": "Diablo",
+    "default_icon": {
+      "16": "icons/16.png",
+      "32": "icons/32.png",
+      "48": "icons/48.png"
+    }
   },
   "icons": {
     "16": "icons/16.png",

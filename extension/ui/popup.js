@@ -7,7 +7,7 @@
  */
 
 (function () {
-  const DEFAULTS = {
+  const DEFAULTS = globalThis.DIABLO_DEFAULT_SETTINGS || {
     peekEnabled: true,
     peekSizePreset: 'medium',
     aggressiveXUnshortenEnabled: false,

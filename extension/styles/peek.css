@@ -4,13 +4,21 @@
   position: fixed;
   inset: 0;
   background: var(--diablo-overlay);
-  backdrop-filter: blur(var(--diablo-overlay-blur));
-  -webkit-backdrop-filter: blur(var(--diablo-overlay-blur));
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 2147483647;
   animation: diablo-peek-backdrop-in 0.2s ease-out;
+  contain: layout style;
+}
+
+.diablo-peek-backdrop.diablo-peek-animating {
+  will-change: opacity;
+}
+
+.diablo-peek-backdrop.diablo-peek-backdrop-blur-ready {
+  backdrop-filter: blur(var(--diablo-overlay-blur));
+  -webkit-backdrop-filter: blur(var(--diablo-overlay-blur));
 }
 
 .diablo-peek-backdrop.diablo-peek-closing {
@@ -39,6 +47,11 @@
   flex-direction: column;
   overflow: hidden;
   animation: diablo-peek-panel-in 0.2s ease-out;
+  contain: layout style paint;
+}
+
+.diablo-peek-panel.diablo-peek-animating {
+  will-change: transform, opacity;
 }
 
 .diablo-peek-panel.diablo-peek-size-small {
@@ -116,11 +129,16 @@
   cursor: pointer;
   background: var(--diablo-bg-control);
   color: var(--diablo-text);
-  transition: background 0.15s;
+  transition: background-color 0.15s;
 }
 
 .diablo-peek-btn:hover {
   background: var(--diablo-bg-control-hover);
+}
+
+.diablo-peek-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
 }
 
 .diablo-peek-btn-close {
@@ -141,7 +159,8 @@
   flex: 1;
   min-height: 0;
   position: relative;
-  background: #fff;
+  background: var(--diablo-bg);
+  contain: strict;
 }
 
 .diablo-peek-frame {
@@ -149,6 +168,7 @@
   height: 100%;
   border: none;
   display: block;
+  /* Keep white by default so most sites match their own page background. */
   background: #fff;
 }
 

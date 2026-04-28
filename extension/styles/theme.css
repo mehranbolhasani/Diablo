@@ -30,7 +30,7 @@
   --diablo-border-strong: #333;
 
   --diablo-overlay: rgba(0, 0, 0, 0.5);
-  --diablo-overlay-blur: 4px;
+  --diablo-overlay-blur: 2px;
 
   --diablo-shadow-panel: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   --diablo-shadow-card: 0 10px 40px rgba(0, 0, 0, 0.4);
@@ -71,7 +71,7 @@
     --diablo-border-strong: #d4d4d4;
 
     --diablo-overlay: rgba(0, 0, 0, 0.35);
-    --diablo-overlay-blur: 4px;
+    --diablo-overlay-blur: 2px;
 
     --diablo-shadow-panel: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     --diablo-shadow-card: 0 10px 40px rgba(0, 0, 0, 0.12);

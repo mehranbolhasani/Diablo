@@ -9,7 +9,9 @@
  *   (strips X-Frame-Options and CSP headers for sub_frame in the active tab)
  */
 
-const DEFAULT_SETTINGS = {
+importScripts('shared/constants.js');
+
+const DEFAULT_SETTINGS = globalThis.DIABLO_DEFAULT_SETTINGS || {
   peekEnabled: true,
   peekSizePreset: 'medium',
   aggressiveXUnshortenEnabled: false,
@@ -38,6 +40,14 @@ function normalizeHttpUrl(input) {
   }
 }
 
+function getDomain(input) {
+  try {
+    return new URL(input).hostname.toLowerCase();
+  } catch {
+    return null;
+  }
+}
+
 function isTcoUrl(input) {
   try {
     const host = new URL(input).hostname.toLowerCase();
@@ -52,7 +62,12 @@ function isTcoUrl(input) {
  * response headers for sub_frame requests in the given tab.
  * This lets our peek iframe load any URL without being blocked.
  */
-async function enablePeekHeaders(tabId) {
+async function enablePeekHeaders(tabId, targetUrl) {
+  const targetDomain = getDomain(targetUrl);
+  if (!targetDomain) {
+    console.warn('[Diablo] Skipping peek header rule due to invalid domain:', targetUrl);
+    return;
+  }
   const ruleId = getPeekRuleId(tabId);
   try {
     await chrome.declarativeNetRequest.updateSessionRules({
@@ -70,6 +85,7 @@ async function enablePeekHeaders(tabId) {
         condition: {
           resourceTypes: ['sub_frame'],
           tabIds: [tabId],
+          requestDomains: [targetDomain],
         },
       }],
     });
@@ -85,7 +101,9 @@ async function disablePeekHeaders(tabId) {
     await chrome.declarativeNetRequest.updateSessionRules({
       removeRuleIds: [ruleId],
     });
-  } catch (_) {}
+  } catch (error) {
+    console.debug('[Diablo] Failed to remove peek header rule:', error);
+  }
 }
 
 async function resolveFinalUrl(url, aggressive) {
@@ -116,10 +134,11 @@ async function resolveFinalUrl(url, aggressive) {
 }
 
 function resolveTcoViaTemporaryTab(url) {
+  console.warn('[Diablo] Aggressive t.co resolution uses a temporary background tab.');
   return new Promise((resolve) => {
     let tempTabId = null;
     let done = false;
-    const timeoutId = setTimeout(() => finish(url), 5000);
+    const timeoutId = setTimeout(() => finish(url), 3500);
 
     function finish(resultUrl) {
       if (done) return;
@@ -178,6 +197,29 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
+function updateActionBadge(isEnabled) {
+  if (isEnabled) {
+    chrome.action.setBadgeText({ text: '' });
+    return;
+  }
+  chrome.action.setBadgeBackgroundColor({ color: '#a11a1a' });
+  chrome.action.setBadgeText({ text: 'OFF' });
+}
+
+function syncBadgeFromStorage() {
+  chrome.storage.sync.get(DEFAULT_SETTINGS, (stored) => {
+    const enabled = stored.peekEnabled !== false;
+    updateActionBadge(enabled);
+  });
+}
+
+chrome.runtime.onStartup.addListener(syncBadgeFromStorage);
+chrome.runtime.onInstalled.addListener(syncBadgeFromStorage);
+chrome.storage.onChanged.addListener((changes, areaName) => {
+  if (areaName !== 'sync' || !changes.peekEnabled) return;
+  updateActionBadge(changes.peekEnabled.newValue !== false);
+});
+
 chrome.tabs.onRemoved.addListener((tabId) => {
   activePeekSessions.delete(tabId);
   disablePeekHeaders(tabId);
@@ -206,8 +248,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       return false;
     }
     const sessionId = typeof message.sessionId === 'number' ? message.sessionId : 0;
+    const targetUrl = normalizeHttpUrl(message.url || '');
+    if (!targetUrl) {
+      sendResponse({ ok: false, error: 'Invalid target URL' });
+      return false;
+    }
     activePeekSessions.set(tabId, sessionId);
-    enablePeekHeaders(tabId).then(() => sendResponse({ ok: true }));
+    enablePeekHeaders(tabId, targetUrl).then(() => sendResponse({ ok: true }));
     return true; // async
   }
 

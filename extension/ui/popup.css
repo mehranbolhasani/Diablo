@@ -43,7 +43,7 @@ body {
   gap: 12px;
   padding: 12px 20px;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background-color 0.15s;
 }
 
 .popup-row:hover {
@@ -80,7 +80,7 @@ body {
   border-radius: var(--diablo-radius-toggle);
   cursor: pointer;
   flex-shrink: 0;
-  transition: background 0.2s;
+  transition: background-color 0.2s;
 }
 
 .popup-toggle::before {
@@ -92,7 +92,7 @@ body {
   height: 20px;
   background: var(--diablo-text-muted);
   border-radius: 50%;
-  transition: transform 0.2s, background 0.2s;
+  transition: transform 0.2s, background-color 0.2s;
 }
 
 .popup-toggle:checked {

@@ -69,5 +69,5 @@ We may update this policy as Diablo evolves. Any changes will be posted in this 
 
 Developer: Mehran Bolhasani  
 Project: Diablo  
-Repository: https://github.com/ (replace with your repository URL)
+Repository: https://github.com/mehranbolhasani/Diablo
 

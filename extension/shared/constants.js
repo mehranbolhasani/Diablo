@@ -1,5 +1,9 @@
 /**
  * Shared constants used across extension contexts.
+ *
+ * SYNC: when adding a setting, update these keys in all four locations:
+ *   shared/constants.js, background.js, peek.js, popup.js
+ * Current keys: peekEnabled, peekSizePreset, aggressiveXUnshortenEnabled
  */
 (function attachSharedConstants(scope) {
   const DEFAULT_SETTINGS = Object.freeze({

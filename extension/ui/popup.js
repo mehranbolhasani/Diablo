@@ -4,6 +4,10 @@
  * On load: read peek-related settings
  * and set toggle states. On change: write back to storage.
  * Content scripts read these settings when acting, so changes apply immediately.
+ *
+ * SYNC: when adding a setting, update these keys in all four locations:
+ *   shared/constants.js, background.js, peek.js, popup.js
+ * Current keys: peekEnabled, peekSizePreset, aggressiveXUnshortenEnabled
  */
 
 (function () {

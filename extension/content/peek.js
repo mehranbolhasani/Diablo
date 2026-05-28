@@ -10,6 +10,10 @@
  * 4. When the panel closes, the rule is removed.
  *
  * This avoids the problems with srcdoc (CORS / wrong origin) and lets every site render.
+ *
+ * SYNC: when adding a setting, update these keys in all four locations:
+ *   shared/constants.js, background.js, peek.js, popup.js
+ * Current keys: peekEnabled, peekSizePreset, aggressiveXUnshortenEnabled
  */
 
 (function () {
@@ -45,6 +49,10 @@
     'drive.google.com',
     'accounts.google.com',
   ];
+
+  // ---------------------------------------------------------------------------
+  // Domain & URL helpers
+  // ---------------------------------------------------------------------------
 
   function isExcluded() {
     try {
@@ -115,6 +123,10 @@
       return fallbackUrl;
     }
   }
+
+  // ---------------------------------------------------------------------------
+  // CSS, settings & lifecycle helpers
+  // ---------------------------------------------------------------------------
 
   function loadExtensionCSS(path) {
     return fetch(chrome.runtime.getURL(path)).then((r) => r.text());
@@ -200,12 +212,33 @@
     scrollLockState = null;
   }
 
+  function isPreviewSameOrigin(previewUrl) {
+    try {
+      return new URL(previewUrl).origin === window.location.origin;
+    } catch {
+      return false;
+    }
+  }
+
+  function removeStalePeekHost() {
+    const stale = document.getElementById(PEEK_HOST_ID);
+    if (stale && stale !== currentPeekHost) {
+      try { stale.remove(); } catch (_) {}
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Peek panel rendering
+  // ---------------------------------------------------------------------------
+
   function closePeek() {
     if (!currentPeekHost) return;
 
     // Tell background to remove the header-stripping rule
     const sessionId = currentPeekSessionId;
-    chrome.runtime.sendMessage({ type: 'peekEnd', sessionId });
+    chrome.runtime.sendMessage({ type: 'peekEnd', sessionId }, () => {
+      void chrome.runtime.lastError;
+    });
     currentPeekSessionId = 0;
 
     const backdrop = currentShadow && currentShadow.querySelector('.diablo-peek-backdrop');
@@ -242,7 +275,7 @@
       removeHost();
       return;
     }
-    const fallbackTimer = setTimeout(removeHost, 300);
+    const fallbackTimer = setTimeout(removeHost, 200);
     animatedNode.addEventListener('animationend', () => {
       clearTimeout(fallbackTimer);
       removeHost();
@@ -250,7 +283,9 @@
   }
 
   function openInNewTab(url) {
-    chrome.runtime.sendMessage({ type: 'openTab', url });
+    chrome.runtime.sendMessage({ type: 'openTab', url }, () => {
+      void chrome.runtime.lastError;
+    });
     closePeek();
   }
 
@@ -284,7 +319,9 @@
     if (currentPeekHost) closePeek();
     const sessionId = nextPeekSessionId++;
     currentPeekSessionId = sessionId;
-    const cssText = cachedCssText || FALLBACK_CSS;
+
+    // Wait for CSS before building DOM to avoid a flash of fallback styles.
+    const cssText = await ensureCssLoaded();
 
     // Step 1: build shadow DOM panel immediately
     const host = document.createElement('div');
@@ -444,7 +481,8 @@
     const closeBtn = document.createElement('button');
     closeBtn.className = 'diablo-peek-btn diablo-peek-btn-close';
     closeBtn.textContent = '\u2715';
-    closeBtn.setAttribute('aria-label', 'Close peek panel');
+    closeBtn.title = 'Close (Escape)';
+    closeBtn.setAttribute('aria-label', 'Close peek panel. Press Escape to close.');
     closeBtn.addEventListener('click', closePeek);
 
     const actionGroup = document.createElement('div');
@@ -474,6 +512,7 @@
     const iframe = document.createElement('iframe');
     iframe.className = 'diablo-peek-frame';
     iframe.style.display = 'none';
+    iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
 
     // Show iframe once loaded, hide spinner
     iframe.addEventListener('load', () => {
@@ -577,22 +616,26 @@
     document.addEventListener('keydown', focusTrapHandler, true);
     closeBtn.focus();
 
-    // Refresh to full CSS asynchronously if the pre-warm has not completed yet.
-    ensureCssLoaded().then((freshCssText) => {
-      if (currentPeekSessionId !== sessionId) return;
-      if (!style.isConnected) return;
-      if (style.textContent === freshCssText) return;
-      style.textContent = freshCssText;
-    });
-
     // Step 2: resolve URL first, then scope frame header stripping to that domain.
     const resolvedUrl = await resolveFinalPreviewUrl(url, aggressiveXUnshortenEnabled === true);
     await new Promise((resolve) => {
-      chrome.runtime.sendMessage({ type: 'peekStart', sessionId, url: resolvedUrl }, () => resolve());
+      chrome.runtime.sendMessage({ type: 'peekStart', sessionId, url: resolvedUrl }, () => {
+        void chrome.runtime.lastError;
+        resolve();
+      });
     });
     if (currentPeekSessionId !== sessionId) {
-      chrome.runtime.sendMessage({ type: 'peekEnd', sessionId });
+      chrome.runtime.sendMessage({ type: 'peekEnd', sessionId }, () => {
+        void chrome.runtime.lastError;
+      });
       return;
+    }
+
+    // Back/forward buttons only work for same-origin previews because
+    // cross-origin iframes block access to contentWindow.history.
+    if (!isPreviewSameOrigin(resolvedUrl)) {
+      backBtn.style.display = 'none';
+      forwardBtn.style.display = 'none';
     }
 
     currentDisplayUrl = resolvedUrl;
@@ -605,6 +648,10 @@
     // Step 3: set iframe src -- X-Frame-Options already stripped by background rule.
     iframe.src = resolvedUrl;
   }
+
+  // ---------------------------------------------------------------------------
+  // Event handlers & bootstrap
+  // ---------------------------------------------------------------------------
 
   function tryOpenPeek(e, fromMouseDown) {
     if (!e.shiftKey || (typeof e.button === 'number' && e.button !== 0)) return;
@@ -651,4 +698,13 @@
   document.addEventListener('click', handleClick, true);
   syncSettingsCache();
   ensureCssLoaded();
+
+  // Clean up any orphaned peek host if the extension reloads or page navigates.
+  window.addEventListener('beforeunload', () => {
+    if (currentPeekHost) {
+      try { currentPeekHost.remove(); } catch (_) {}
+    }
+  });
+  // Safety sweep for stale hosts left behind by unexpected termination.
+  setInterval(removeStalePeekHost, 30000);
 })();

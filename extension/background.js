@@ -7,6 +7,10 @@
  * - Open new tabs from peek panel actions
  * - Manage declarativeNetRequest session rules so the peek iframe can load any site
  *   (strips X-Frame-Options and CSP headers for sub_frame in the active tab)
+ *
+ * SYNC: when adding a setting, update these keys in all four locations:
+ *   shared/constants.js, background.js, peek.js, popup.js
+ * Current keys: peekEnabled, peekSizePreset, aggressiveXUnshortenEnabled
  */
 
 importScripts('shared/constants.js');
@@ -112,14 +116,11 @@ async function resolveFinalUrl(url, aggressive) {
     const controller = new AbortController();
     timeoutId = setTimeout(() => controller.abort(), 2000);
     const res = await fetch(url, {
-      method: 'GET',
+      method: 'HEAD',
       redirect: 'follow',
       credentials: 'omit',
       signal: controller.signal,
     });
-    if (res.body) {
-      try { await res.body.cancel(); } catch (_) {}
-    }
     const normalized = normalizeHttpUrl(res.url);
     const resolved = normalized || url;
     if (!isTcoUrl(url) || !isTcoUrl(resolved)) return resolved;

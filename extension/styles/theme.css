@@ -16,14 +16,15 @@
   --diablo-bg-hover: #222;
   --diablo-bg-control: #333;
   --diablo-bg-control-hover: #404040;
+  --frame-bg: lch(22 0 0);
 
   --diablo-text: #e8e8e8;
   --diablo-text-muted: #888;
   --diablo-text-dim: #a0a0a0;
   --diablo-text-faint: #666;
 
-  --diablo-accent: #3a7bd5;
-  --diablo-accent-hover: #4a8ae0;
+  --diablo-accent: #F54900;
+  --diablo-accent-hover: #FF8904;
   --diablo-accent-foreground: #fff;
 
   --diablo-border: #2a2a2a;
@@ -57,14 +58,15 @@
     --diablo-bg-hover: #eeeeee;
     --diablo-bg-control: #e5e5e5;
     --diablo-bg-control-hover: #d4d4d4;
+    --frame-bg: lch(80 0 0);
 
     --diablo-text: #171717;
     --diablo-text-muted: #737373;
     --diablo-text-dim: #525252;
     --diablo-text-faint: #a3a3a3;
 
-    --diablo-accent: #2563eb;
-    --diablo-accent-hover: #3b82f6;
+    --diablo-accent: #F54900;
+    --diablo-accent-hover: #FF8904;
     --diablo-accent-foreground: #fff;
 
     --diablo-border: #e5e5e5;

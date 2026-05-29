@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Diablo",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Arc-inspired browsing: peek links instantly.",
   "permissions": ["tabs", "storage", "declarativeNetRequest"],
   "host_permissions": ["<all_urls>"],
@@ -26,11 +26,11 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["shared/constants.js", "content/peek.js"],
+      "js": ["shared/constants.js", "shared/Readability.js", "content/peek.js"],
       "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [
-    { "resources": ["styles/theme.css", "styles/peek.css"], "matches": ["<all_urls>"] }
+    { "resources": ["styles/theme.css", "styles/peek.css", "styles/reader.css", "fonts/Merriweather-Regular.woff2", "fonts/Merriweather-Italic.woff2", "fonts/Merriweather-Bold.woff2"], "matches": ["<all_urls>"] }
   ]
 }

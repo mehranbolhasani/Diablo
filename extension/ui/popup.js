@@ -7,7 +7,7 @@
  *
  * SYNC: when adding a setting, update these keys in all four locations:
  *   shared/constants.js, background.js, peek.js, popup.js
- * Current keys: peekEnabled, peekSizePreset, aggressiveXUnshortenEnabled
+ * Current keys: peekEnabled, peekSizePreset, aggressiveXUnshortenEnabled, readerTheme
  */
 
 (function () {
@@ -15,6 +15,7 @@
     peekEnabled: true,
     peekSizePreset: 'medium',
     aggressiveXUnshortenEnabled: false,
+    readerTheme: 'paper',
   };
 
   const ids = ['peekEnabled', 'aggressiveXUnshortenEnabled'];
@@ -29,6 +30,11 @@
       if (sizeEl) {
         const preset = stored.peekSizePreset;
         sizeEl.value = (preset === 'small' || preset === 'large' || preset === 'medium') ? preset : 'medium';
+      }
+      const themeEl = document.getElementById('readerTheme');
+      if (themeEl) {
+        const theme = stored.readerTheme;
+        themeEl.value = (theme === 'paper' || theme === 'dusk' || theme === 'ink') ? theme : 'paper';
       }
     });
   }
@@ -54,6 +60,15 @@
       const value = sizeEl.value;
       const preset = (value === 'small' || value === 'large' || value === 'medium') ? value : 'medium';
       save('peekSizePreset', preset);
+    });
+  }
+
+  const themeEl = document.getElementById('readerTheme');
+  if (themeEl) {
+    themeEl.addEventListener('change', () => {
+      const value = themeEl.value;
+      const theme = (value === 'paper' || value === 'dusk' || value === 'ink') ? value : 'paper';
+      save('readerTheme', theme);
     });
   }
 })();

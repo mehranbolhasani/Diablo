@@ -10,7 +10,7 @@
  *
  * SYNC: when adding a setting, update these keys in all four locations:
  *   shared/constants.js, background.js, peek.js, popup.js
- * Current keys: peekEnabled, peekSizePreset, aggressiveXUnshortenEnabled
+ * Current keys: peekEnabled, peekSizePreset, aggressiveXUnshortenEnabled, readerTheme
  */
 
 importScripts('shared/constants.js');
@@ -19,6 +19,7 @@ const DEFAULT_SETTINGS = globalThis.DIABLO_DEFAULT_SETTINGS || {
   peekEnabled: true,
   peekSizePreset: 'medium',
   aggressiveXUnshortenEnabled: false,
+  readerTheme: 'paper',
 };
 
 // ---------------------------------------------------------------------------
@@ -285,6 +286,42 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const aggressive = message.aggressive === true;
     resolveFinalUrl(safeUrl, aggressive).then((resolvedUrl) => sendResponse({ url: resolvedUrl }));
     return true; // async
+  }
+
+  if (message.type === 'fetchForReader') {
+    (async () => {
+      try {
+        const safeUrl = normalizeHttpUrl(message.url);
+        if (!safeUrl) {
+          sendResponse({ ok: false, error: 'Invalid URL' });
+          return;
+        }
+        const response = await fetch(safeUrl, {
+          redirect: 'follow',
+          credentials: 'omit',
+          headers: { 'Accept': 'text/html' },
+        });
+        const contentType = response.headers.get('content-type') || '';
+        if (!contentType.includes('text/html')) {
+          sendResponse({ ok: false, error: 'not-html' });
+          return;
+        }
+        const contentLength = response.headers.get('content-length');
+        if (contentLength && parseInt(contentLength, 10) > 5 * 1024 * 1024) {
+          sendResponse({ ok: false, error: 'too-large' });
+          return;
+        }
+        const html = await response.text();
+        if (html.length > 5 * 1024 * 1024) {
+          sendResponse({ ok: false, error: 'too-large' });
+          return;
+        }
+        sendResponse({ ok: true, html, finalUrl: response.url });
+      } catch (err) {
+        sendResponse({ ok: false, error: err.message });
+      }
+    })();
+    return true;
   }
 
   sendResponse({ error: 'Unknown message type' });
